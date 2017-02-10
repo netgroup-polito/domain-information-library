@@ -9,7 +9,7 @@ import logging
 
 from jsonschema import ValidationError
 
-from exception import DomainInfoValidationError
+from .exception import DomainInfoValidationError
 
 
 class ValidateDomainInfo(object):
