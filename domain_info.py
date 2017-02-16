@@ -256,8 +256,8 @@ class Storage(object):
 
 class Interface(object):
     # Subinterfaces are ignored
-    def __init__(self, index=None, node=None, name=None, side=None, enabled=None, neighbors=None, gre=False, gre_tunnels=None,
-                 vlan=False, vlan_mode=None, vlans_free=None):
+    def __init__(self, index=None, node=None, name=None, side=None, enabled=None, neighbors=None, gre=False,
+                 gre_tunnels=None, free_gre_keys= None, vlan=False, vlan_mode=None, free_vlans=None):
         """
         :param index: subinterface index
         :param node: ip address
@@ -267,9 +267,10 @@ class Interface(object):
         :param neighbors:
         :param gre:
         :param gre_tunnels:
+        :param free_gre_keys:
         :param vlan:
         :param vlan_mode:
-        :param vlans_free:
+        :param free_vlans:
         :type index: int
         :type node: str
         :type name: str
@@ -278,9 +279,10 @@ class Interface(object):
         :type neighbors: list of Neighbor
         :type gre: bool
         :type gre_tunnels: list of GreTunnel
+        :type free_gre_keys: list of int
         :type vlan: bool
         :type vlan_mode: str
-        :type vlans_free: list of int
+        :type free_vlans: list of int
         """
         self.index = index
         self.node = node
@@ -289,9 +291,10 @@ class Interface(object):
         self.enabled = enabled
         self.gre = gre
         self.gre_tunnels = gre_tunnels or []
+        self.free_gre_keys = free_gre_keys or []
         self.vlan = vlan
         self.vlan_mode = vlan_mode
-        self.vlans_free = vlans_free or []
+        self.free_vlans = free_vlans or []
         self.neighbors = neighbors or []
 
     def parse_dict(self, interface_dict):
@@ -316,6 +319,7 @@ class Interface(object):
                                 gre_tunnel = GreTunnel()
                                 gre_tunnel.parse_dict(gre_dict)
                                 self.gre_tunnels.append(gre_tunnel)
+
         if 'netgroup-neighbor:neighbors' in interface_dict:
             for neighbor_dict in interface_dict['netgroup-neighbor:neighbors']['netgroup-neighbor:neighbor']:
                 neighbor = Neighbor()
@@ -327,7 +331,7 @@ class Interface(object):
                 self.vlan = True
                 for vlan_dict in interface_dict['netgroup-if-ethernet:ethernet']['netgroup-vlan:vlans'][
                         'netgroup-vlan:vlan']:
-                    self.vlans_free.append(vlan_dict['netgroup-vlan:vlan-id'])
+                    self.free_vlans.append(vlan_dict['netgroup-vlan:vlan-id'])
                 ''' - old way, does not follow openconfig model
                 if 'netgroup-vlan:config' in interface_dict['openconfig-if-ethernet:ethernet'][
                         'openconfig-vlan:vlan']:
@@ -336,7 +340,7 @@ class Interface(object):
                     self.vlan_mode = vlan_config['interface-mode']
                     if vlan_config['interface-mode'] == 'TRUNK':
                         for vlan in vlan_config['trunk-vlans']:
-                            self.vlans_free.append(vlan)
+                            self.free_vlans.append(vlan)
                 '''
 
     def get_dict(self):
@@ -378,7 +382,7 @@ class Interface(object):
                 config_dict['interface-mode'] = self.vlan_mode
                 if self.vlan_mode == 'TRUNK':
                     trunk_vlans = []
-                    for vlan in self.vlans_free:
+                    for vlan in self.free_vlans:
                         trunk_vlans.append(vlan)
                     config_dict['trunk-vlans'] = trunk_vlans
                 interface_dict['openconfig-if-ethernet:ethernet'] = {}
@@ -388,7 +392,7 @@ class Interface(object):
             '''
             interface_dict['netgroup-if-ethernet:ethernet'] = {}
             vlans = []
-            for vlan_id in self.vlans_free:
+            for vlan_id in self.free_vlans:
                 vlan_dict = {'netgroup-vlan:vlan-id': vlan_id}
                 config_dict = {'netgroup-vlan:vlan-id': vlan_id}
                 vlan_dict['netgroup-vlan:config'] = config_dict
@@ -412,8 +416,13 @@ class Interface(object):
                 "Tried to add a gre tunnel with a wrong type. Expected GreTunnel, found " + type(gre_tunnel))
 
     def add_vlan(self, vlan):
-        self.vlans_free.append(vlan)
+        self.free_vlans.append(vlan)
 
+    def get_full_name(self):
+        if self.node is not None:
+            return self.node + '/' + self.name
+        else:
+            return self.name
 
 class Neighbor(object):
     def __init__(self, domain_name=None, remote_interface=None, neighbor_type=None, node=None):
