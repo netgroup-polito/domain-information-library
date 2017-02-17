@@ -544,6 +544,11 @@ class Capabilities(object):
         capabilities_dict['functional-capabilities']['functional-capability'] = functional_capabilities
         return capabilities_dict
 
+    def get_functional_capability_by_name(self, name):
+        for functional_capability in self.functional_capabilities:
+            if functional_capability.name == name:
+                return functional_capability
+
 
 class InfrastructuralCapability(object):
     def __init__(self, _type=None, name=None):
