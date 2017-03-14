@@ -122,7 +122,17 @@ class HardwareInfo(object):
         else:
             raise TypeError("Tried to add an interface with a wrong type. Expected Interface, found " + type(interface))
 
-    def get_interface(self, node, name):
+    def get_interface(self, name, node=None):
+        """
+
+        :param name:
+        :param node:
+        :return:
+        :rtype: Interface
+        """
+        if node is None and '/' in name:
+            node = name.split('/')[0]
+            name = name.split('/')[1]
         for interface in self.interfaces:
             if interface.node == node and interface.name == name:
                 return interface
@@ -544,9 +554,9 @@ class Capabilities(object):
         capabilities_dict['functional-capabilities']['functional-capability'] = functional_capabilities
         return capabilities_dict
 
-    def get_functional_capability_by_name(self, name):
+    def get_functional_capability(self, fc_type):
         for functional_capability in self.functional_capabilities:
-            if functional_capability.name == name:
+            if functional_capability.type == fc_type:
                 return functional_capability
 
 
