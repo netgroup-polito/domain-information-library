@@ -3,6 +3,7 @@ Created on 02 sep 2016
 @author: gabrielecastellano
 """
 import json
+from .validator import ValidateDomainInfo
 
 
 class DomainInfo(object):
@@ -50,7 +51,7 @@ class DomainInfo(object):
             self.capabilities.parse_dict(domain_info_dict['netgroup-domain:informations']['capabilities'])
 
     def get_dict(self):
-        domain_info_dict = {}
+        domain_info_dict = dict()
         domain_info_dict['netgroup-domain:informations'] = {}
         domain_info_dict['netgroup-domain:informations']['id'] = self.domain_id
         domain_info_dict['netgroup-domain:informations']['name'] = self.name
@@ -75,7 +76,7 @@ class DomainInfo(object):
 
         json_data = open(file_name).read()
         domain_info_dict = json.loads(json_data)
-        # TODO validation
+        ValidateDomainInfo().validate(domain_info_dict)
         domain_info = DomainInfo()
         domain_info.parse_dict(domain_info_dict)
         return domain_info
@@ -195,7 +196,7 @@ class Cpu(object):
         self.free = cpu_dict['free']
 
     def get_dict(self):
-        cpu_dict = {}
+        cpu_dict = dict()
         cpu_dict['number'] = self.number
         cpu_dict['frequency'] = self.frequency
         cpu_dict['free'] = self.free
@@ -227,7 +228,7 @@ class Memory(object):
         self.free = memory_dict['free']
 
     def get_dict(self):
-        memory_dict = {}
+        memory_dict = dict()
         memory_dict['size'] = self.size
         memory_dict['frequency'] = self.frequency
         memory_dict['latency'] = self.latency
@@ -256,7 +257,7 @@ class Storage(object):
         self.free = storage_dict['free']
 
     def get_dict(self):
-        storage_dict = {}
+        storage_dict = dict()
         storage_dict['size'] = self.size
         storage_dict['latency'] = self.latency
         storage_dict['free'] = self.free
@@ -267,7 +268,7 @@ class Storage(object):
 class Interface(object):
     # Subinterfaces are ignored
     def __init__(self, index=None, node=None, name=None, side=None, enabled=None, neighbors=None, gre=False,
-                 gre_tunnels=None, free_gre_keys= None, vlan=False, vlan_mode=None, free_vlans=None):
+                 gre_tunnels=None, free_gre_keys=None, vlan=False, vlan_mode=None, free_vlans=None):
         """
         :param index: subinterface index
         :param node: ip address
@@ -320,12 +321,12 @@ class Interface(object):
         self.enabled = interface_dict['config']['enabled']
 
         if 'subinterfaces' in interface_dict:
-            for subinterface_dict in interface_dict['subinterfaces']['subinterface']:
-                if subinterface_dict['config']['name'] == self.name:
-                    self.gre = subinterface_dict['netgroup-if-capabilities:capabilities']['netgroup-if-capabilities:gre']
+            for sub_if in interface_dict['subinterfaces']['subinterface']:
+                if sub_if['config']['name'] == self.name:
+                    self.gre = sub_if['netgroup-if-capabilities:capabilities']['netgroup-if-capabilities:gre']
                     if self.gre:
-                        if 'netgroup-if-gre:gre' in subinterface_dict:
-                            for gre_dict in subinterface_dict['netgroup-if-gre:gre']:
+                        if 'netgroup-if-gre:gre' in sub_if:
+                            for gre_dict in sub_if['netgroup-if-gre:gre']:
                                 gre_tunnel = GreTunnel()
                                 gre_tunnel.parse_dict(gre_dict)
                                 self.gre_tunnels.append(gre_tunnel)
@@ -354,7 +355,7 @@ class Interface(object):
                 '''
 
     def get_dict(self):
-        interface_dict = {}
+        interface_dict = dict()
         interface_dict['index'] = self.index
         if self.node is not None:
             interface_dict['name'] = self.node + '/' + self.name
@@ -367,7 +368,7 @@ class Interface(object):
 
         interface_dict['subinterfaces'] = {}
         interface_dict['subinterfaces']['subinterface'] = []
-        subinterface_dict = {}
+        subinterface_dict = dict()
         subinterface_dict['config'] = {}
         subinterface_dict['config']['name'] = self.name
         subinterface_dict['netgroup-if-capabilities:capabilities'] = {}
@@ -434,6 +435,7 @@ class Interface(object):
         else:
             return self.name
 
+
 class Neighbor(object):
     def __init__(self, domain_name=None, remote_interface=None, neighbor_type=None, node=None):
         """
@@ -464,7 +466,7 @@ class Neighbor(object):
             self.neighbor_type = neighbor_dict['neighbor-type']
 
     def get_dict(self):
-        neighbor_dict = {}
+        neighbor_dict = dict()
         neighbor_dict['domain-name'] = self.domain_name
         if self.remote_interface is not None:
             if self.node is not None:
@@ -504,7 +506,7 @@ class GreTunnel(object):
             self.gre_key = gre_dict['options']['key']
 
     def get_dict(self):
-        gre_dict = {}
+        gre_dict = dict()
         gre_dict['name'] = self.name
 
         if self.local_ip is not None:
@@ -576,7 +578,7 @@ class InfrastructuralCapability(object):
         self.name = infrastructural_capability_dict['name']
 
     def get_dict(self):
-        ic_dict = {}
+        ic_dict = dict()
         ic_dict['type'] = self.type
         ic_dict['name'] = self.name
 
@@ -584,7 +586,8 @@ class InfrastructuralCapability(object):
 
 
 class FunctionalCapability(object):
-    def __init__(self, _type=None, name=None, ready=False, family=None, template=None, resources=None, function_specifications=None):
+    def __init__(self, _type=None, name=None, ready=False, family=None, template=None, resources=None,
+                 function_specifications=None):
         """
         :param _type:
         :param name:
@@ -626,7 +629,7 @@ class FunctionalCapability(object):
                 self.function_specifications.append(function_specification)
 
     def get_dict(self):
-        fc_dict = {}
+        fc_dict = dict()
         fc_dict['type'] = self.type
         fc_dict['name'] = self.name
         fc_dict['ready'] = self.ready
@@ -668,7 +671,7 @@ class FunctionSpecification(object):
         self.mean = function_specification_dict['mean']
 
     def get_dict(self):
-        fc_dict = {}
+        fc_dict = dict()
         fc_dict['name'] = self.name
         fc_dict['value'] = self.value
         fc_dict['unit'] = self.unit

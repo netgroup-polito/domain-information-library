@@ -21,8 +21,9 @@ module netgroup-neighbor {
 		        leaf neighbor-type {
 		        	description "The network type of the neighbor";
 		        	type enumeration {
-		        		enum internet;
-		        		enum isp;
+		        		enum domain;
+		        		enum legacy-network;
+		        		enum access-network;
 		        	}
 		        }
 		        leaf remote-interface {

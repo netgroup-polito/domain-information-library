@@ -15,6 +15,12 @@ from .exception import DomainInfoValidationError
 class ValidateDomainInfo(object):
 
     def validate(self, domain_info):
+        """
+
+        :param domain_info:
+        :type domain_info: dict
+        :return:
+        """
         try:
             # TODO implement json validation against YANG model
             pass
