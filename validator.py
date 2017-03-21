@@ -2,7 +2,6 @@
 Created on Feb 3, 2016
 
 @author: gabrielecastellano
-
 """
 
 import logging
@@ -27,4 +26,3 @@ class ValidateDomainInfo(object):
         except ValidationError as err:
             logging.info(err.message)
             raise DomainInfoValidationError(err.message)
-
