@@ -21,8 +21,8 @@ module netgroup-neighbor {
 		        leaf neighbor-type {
 		        	description "The network type of the neighbor";
 		        	type enumeration {
-		        		enum legacy-network;
 		        		enum domain;
+		        		enum legacy-network;
 		        		enum access-network;
 		        	}
 		        }
