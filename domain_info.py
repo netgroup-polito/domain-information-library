@@ -478,6 +478,12 @@ class Neighbor(object):
 
         return neighbor_dict
 
+    def get_full_interface_name(self):
+        if self.node is not None:
+            return self.node + '/' + self.remote_interface
+        else:
+            return self.remote_interface
+
 
 class GreTunnel(object):
     def __init__(self, name=None, local_ip=None, remote_ip=None, gre_key=None):
