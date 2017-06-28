@@ -1,11 +1,12 @@
 {
   "netgroup-domain:informations": {
     "name": "onos_domain",
-    "management-address": "127.0.0.1:10000",
+    "management-address": "127.0.0.1:8080",
     "hardware-informations": {
       "interfaces": {
         "interface": [
           {
+            "index": 1,
             "netgroup-neighbor:neighbors": {
               "netgroup-neighbor:neighbor": [
                 {
@@ -52,6 +53,7 @@
             }
           },
           {
+            "index": 2,
             "name": "of:000064e9505a87c0/5102",
             "subinterfaces": {
               "subinterface": [
@@ -84,6 +86,7 @@
             }
           },
           {
+            "index": 3,
             "name": "of:000034dbfd3c1140/5097",
             "subinterfaces": {
               "subinterface": [
@@ -116,6 +119,7 @@
             }
           },
           {
+            "index": 4,
             "name": "of:000064e9505a8a40/5106",
             "netgroup-neighbor:neighbors": {
               "netgroup-neighbor:neighbor": [
@@ -156,6 +160,7 @@
             }
           },
           {
+            "index": 5,
             "name": "of:000064e9505a8a40/5107",
             "netgroup-neighbor:neighbors": {
               "netgroup-neighbor:neighbor": [
