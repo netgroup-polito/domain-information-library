@@ -11,7 +11,8 @@
               "netgroup-neighbor:neighbor": [
                 {
                   "remote-interface": "of:000084802d9d0540/5101",
-                  "domain-name": "openstack"
+                  "domain-name": "openstack",
+                  "neighbor-type": "domain"
                 }
               ]
             },
@@ -125,7 +126,8 @@
               "netgroup-neighbor:neighbor": [
                 {
                   "remote-interface": "eth1",
-                  "domain-name": "UN1"
+                  "domain-name": "UN1",
+                  "neighbor-type": "domain"
                 }
               ]
             },
@@ -166,7 +168,8 @@
               "netgroup-neighbor:neighbor": [
                 {
                   "remote-interface": "eth2",
-                  "domain-name": "UN1"
+                  "domain-name": "UN1",
+                  "neighbor-type": "domain"
                 }
               ]
             },
